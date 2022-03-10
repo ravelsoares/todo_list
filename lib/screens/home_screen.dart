@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_list/components/todo_form.dart';
 import 'package:todo_list/repositories/todo_repository.dart';
-import '../adapters/todo_hive_adapter.dart';
 import '../models/todo_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,7 +12,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TodoRepository todoRepository = TodoRepository();
-  //List<Todo> todos = TodoRepository.todos;
   List<Todo> todos = [];
   final todoController = TextEditingController();
 
