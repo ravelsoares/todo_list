@@ -13,8 +13,8 @@ class TodoRepository {
     return todos;
   }
 
-  void saveTodos(List<Todo> transactions) {
-    final jsonString = json.encode(transactions);
+  void saveTodos(List<Todo> todos) {
+    final jsonString = json.encode(todos);
     prefs.setString('todos', jsonString);
   }
 }

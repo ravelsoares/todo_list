@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           setState(() {
                             todos[index].isCheck = !todos[index].isCheck;
                           });
+                          todoRepository.saveTodos(todos);
                         },
                         child: CircleAvatar(
                           backgroundColor:

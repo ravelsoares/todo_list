@@ -73,8 +73,8 @@ class _TodoFormState extends State<TodoForm> {
                   TextButton(
                     onPressed: _submitForm,
                     child: Text(
-                      isEditted ? 'Editar' : 'Nova Tarefa',
-                      style: TextStyle(color: Colors.purple),
+                      'Salvar',
+                      style: TextStyle(color: Theme.of(context).primaryColor),
                     ),
                   ),
                 ],
