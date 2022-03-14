@@ -49,6 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void openModalBottomSheet(Todo? todo, Function(Todo, String, String) update,
       Function(String, String) add) {
     showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(30),
+        ),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
       isScrollControlled: true,
       context: context,
       builder: (_) {
