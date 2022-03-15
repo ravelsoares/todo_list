@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_list/components/todo_form.dart';
-import 'package:todo_list/repositories/todo_repository.dart';
+import 'package:todo_list/models/boxes.dart';
 import '../models/todo_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TodoRepository todoRepository = TodoRepository();
+  final box = Boxes.getTodos();
   List<Todo> todos = [];
   final todoController = TextEditingController();
 
@@ -19,9 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final todo = Todo(title: title, description: description);
     setState(() {
       todos.add(todo);
-      todoRepository.saveTodos(todos);
       todoController.clear();
     });
+    box.add(todo);
     Navigator.of(context).pop();
   }
 
@@ -29,20 +30,23 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       todos.removeAt(index);
     });
-    todoRepository.saveTodos(todos);
+    box.deleteAt(index);
   }
 
   void updateTodo(Todo? todoOld, String title, String description) {
+    final newTodo = Todo(title: title, description: description);
+    int index;
     todos.forEach((element) {
       if (element.title == todoOld?.title &&
           element.description == todoOld?.description) {
+        index = todos.indexOf(element);
         setState(() {
           element.title = title;
           element.description = description;
         });
+        box.putAt(index, newTodo);
       }
     });
-    todoRepository.saveTodos(todos);
     Navigator.of(context).pop();
   }
 
@@ -71,11 +75,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    todoRepository.getTodos().then((value) {
-      setState(() {
-        todos = value;
-      });
+    setState(() {
+      todos = box.values.toList();
     });
+  }
+
+  @override
+  void dispose() {
+    Hive.close();
+    super.dispose();
   }
 
   @override
@@ -104,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           setState(() {
                             todos[index].isCheck = !todos[index].isCheck;
                           });
-                          todoRepository.saveTodos(todos);
+                          box.putAt(index, todos[index]);
                         },
                         child: CircleAvatar(
                           backgroundColor:
