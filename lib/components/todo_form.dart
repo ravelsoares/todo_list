@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_list/provider/todo_list_provider.dart';
 import '../models/todo_model.dart';
 
 class TodoForm extends StatefulWidget {
-  const TodoForm(this.todo, this.addTodo, this.updateTodo, {Key? key})
-      : super(key: key);
+  const TodoForm(this.todo, {Key? key}) : super(key: key);
   final Todo? todo;
-  final Function(String title, String description) addTodo;
-  final Function(Todo todoOld, String title, String description) updateTodo;
 
   @override
   State<TodoForm> createState() => _TodoFormState();
@@ -15,15 +14,20 @@ class TodoForm extends StatefulWidget {
 class _TodoFormState extends State<TodoForm> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+
   late Todo? todoEdited;
   late bool isEditted;
+
   _submitForm() {
     final title = _titleController.text;
     final description = _descriptionController.text;
     if (title.isEmpty) return;
+    final todo = Todo(title: title, description: description);
     isEditted
-        ? widget.updateTodo(todoEdited!, title, description)
-        : widget.addTodo(title, description);
+        ? Provider.of<TodoListProvider>(context, listen: false)
+            .updateTodo(todoEdited, todo)
+        : Provider.of<TodoListProvider>(context, listen: false).addTodo(todo);
+    Navigator.of(context).pop();
   }
 
   @override

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list/components/todo_form.dart';
-import 'package:todo_list/models/boxes.dart';
+import 'package:todo_list/components/todo_item.dart';
+import 'package:todo_list/provider/todo_list_provider.dart';
 import '../models/todo_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,73 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final box = Boxes.getTodos();
-  List<Todo> todos = [];
   final todoController = TextEditingController();
-
-  void addTodo(String title, String description) {
-    final todo = Todo(title: title, description: description);
-    setState(() {
-      todos.add(todo);
-      todoController.clear();
-    });
-    box.add(todo);
-    Navigator.of(context).pop();
-  }
-
-  void deleteTodo(index) {
-    setState(() {
-      todos.removeAt(index);
-    });
-    box.deleteAt(index);
-  }
-
-  void updateTodo(Todo? todoOld, String title, String description) {
-    final newTodo = Todo(title: title, description: description);
-    int index;
-    todos.forEach((element) {
-      if (element.title == todoOld?.title &&
-          element.description == todoOld?.description) {
-        index = todos.indexOf(element);
-        setState(() {
-          element.title = title;
-          element.description = description;
-        });
-        box.putAt(index, newTodo);
-      }
-    });
-    Navigator.of(context).pop();
-  }
-
-  void openModalBottomSheet(Todo? todo, Function(Todo, String, String) update,
-      Function(String, String) add) {
-    showModalBottomSheet(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(30),
-        ),
-      ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      isScrollControlled: true,
-      context: context,
-      builder: (_) {
-        return TodoForm(todo, add, update);
-      },
-    );
-  }
-
-  final appBar = AppBar(
-    title: Text('Lista de Tarefas'),
-    centerTitle: true,
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      todos = box.values.toList();
-    });
-  }
 
   @override
   void dispose() {
@@ -91,68 +27,51 @@ class _HomeScreenState extends State<HomeScreen> {
     final availableHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
         appBar.preferredSize.height;
+    final List<Todo> todos = Provider.of<TodoListProvider>(context).todoList;
     return Scaffold(
       appBar: appBar,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: availableHeight,
-              child: ListView.builder(
-                itemCount: todos.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 3,
-                    child: ListTile(
-                      title: Text(todos[index].title!),
-                      subtitle: Text(todos[index].description!),
-                      leading: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            todos[index].isCheck = !todos[index].isCheck;
-                          });
-                          box.putAt(index, todos[index]);
-                        },
-                        child: CircleAvatar(
-                          backgroundColor:
-                              todos[index].isCheck ? Colors.green : Colors.red,
-                          child: Icon(todos[index].isCheck
-                              ? Icons.check
-                              : Icons.dangerous),
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                      trailing: Container(
-                        width: 100,
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () => openModalBottomSheet(
-                                  todos[index], updateTodo, addTodo),
-                              icon: Icon(Icons.edit, color: Colors.orange),
-                            ),
-                            IconButton(
-                              onPressed: () => deleteTodo(index),
-                              icon: Icon(Icons.delete, color: Colors.red),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
+      body: Consumer(
+        builder: (_, todoList, __) => ListView.builder(
+          itemCount: todos.length,
+          itemBuilder: (context, index) {
+            return ChangeNotifierProvider.value(
+              value: todos[index],
+              child: TodoItem(
+                todo: todos[index],
+                index: index,
+                openModal: openModalBottomSheet,
               ),
-            )
-          ],
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          openModalBottomSheet(null, updateTodo, addTodo);
+          openModalBottomSheet(null);
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  final appBar = AppBar(
+    title: const Text('Lista de Tarefas'),
+    centerTitle: true,
+  );
+
+  void openModalBottomSheet(Todo? todo) {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(30),
+        ),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      isScrollControlled: true,
+      context: context,
+      builder: (_) {
+        return TodoForm(todo);
+      },
     );
   }
 }

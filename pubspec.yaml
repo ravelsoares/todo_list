@@ -37,6 +37,9 @@ dependencies:
   hive_flutter: ^1.1.0
   path_provider: ^2.0.9
   shared_preferences: ^2.0.13
+  rx_notifier: any
+  provider: ^6.0.2
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
