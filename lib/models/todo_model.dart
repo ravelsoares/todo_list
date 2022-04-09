@@ -1,9 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'todo_model.g.dart';
 
 @HiveType(typeId: 0)
-class Todo extends HiveObject {
+class Todo extends HiveObject with ChangeNotifier {
   @HiveField(0)
   String? title;
   @HiveField(1)
@@ -12,18 +13,4 @@ class Todo extends HiveObject {
   bool isCheck;
 
   Todo({this.title, this.description, this.isCheck = false});
-
-  /*Todo.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        description = json['description'],
-        isCheck = json['isCheck'];
-
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'description': description,
-      'isCheck' : isCheck,
-    };
-  }*/
-
 }
