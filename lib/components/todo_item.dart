@@ -23,12 +23,15 @@ class TodoItem extends StatelessWidget {
         subtitle: Text(todo.description!),
         leading: GestureDetector(
           onTap: () {
-            todo.isCheck = !todo.isCheck;
+            Provider.of<TodoListProvider>(context, listen: false)
+                .todoCheck(todo);
           },
-          child: CircleAvatar(
-            backgroundColor: todo.isCheck ? Colors.green : Colors.red,
-            child: Icon(todo.isCheck ? Icons.check : Icons.dangerous),
-            foregroundColor: Colors.white,
+          child: Consumer<Todo>(
+            builder: (_, todoItem, __) => CircleAvatar(
+              backgroundColor: todoItem.isCheck ? Colors.green : Colors.red,
+              child: Icon(todoItem.isCheck ? Icons.check : Icons.dangerous),
+              foregroundColor: Colors.white,
+            ),
           ),
         ),
         trailing: SizedBox(

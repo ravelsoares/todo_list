@@ -30,21 +30,36 @@ class _HomeScreenState extends State<HomeScreen> {
     final List<Todo> todos = Provider.of<TodoListProvider>(context).todoList;
     return Scaffold(
       appBar: appBar,
-      body: Consumer(
-        builder: (_, todoList, __) => ListView.builder(
-          itemCount: todos.length,
-          itemBuilder: (context, index) {
-            return ChangeNotifierProvider.value(
-              value: todos[index],
-              child: TodoItem(
-                todo: todos[index],
-                index: index,
-                openModal: openModalBottomSheet,
+      body: todos.isNotEmpty
+          ? Consumer(
+              builder: (_, todoList, __) => ListView.builder(
+                itemCount: todos.length,
+                itemBuilder: (context, index) {
+                  return ChangeNotifierProvider.value(
+                    value: todos[index],
+                    child: TodoItem(
+                      todo: todos[index],
+                      index: index,
+                      openModal: openModalBottomSheet,
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
+            )
+          : Column(
+              children: [
+                Image.asset('assets/scrum_board.gif', fit: BoxFit.cover),
+                const SizedBox(height: 15),
+                const Text(
+                  'Nenhuma tarefa no momento',
+                  style: TextStyle(
+                    color: Colors.purple,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           openModalBottomSheet(null);

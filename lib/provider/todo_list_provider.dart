@@ -29,6 +29,21 @@ class TodoListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  todoCheck(Todo todo) {
+    int index;
+    _todoList.forEach(
+      (element) {
+        if (element.title == todo.title &&
+            element.description == todo.description) {
+          index = _todoList.indexOf(element);
+          element.isCheck = !element.isCheck;
+          box.putAt(index, todo);
+        }
+      },
+    );
+    notifyListeners();
+  }
+
   deleteTodo(int index) {
     _todoList.removeAt(index);
     box.deleteAt(index);
