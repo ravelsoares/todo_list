@@ -46,8 +46,33 @@ class TodoItem extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () {
-                  Provider.of<TodoListProvider>(context, listen: false)
-                      .deleteTodo(index);
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Tem Certeza ?'),
+                        content: const Text(
+                            'Se você excluir não terá como recuperar!'),
+                        actions: [
+                          TextButton(
+                            child: const Text('Cancelar'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Excluir'),
+                            onPressed: () {
+                              Provider.of<TodoListProvider>(context,
+                                      listen: false)
+                                  .deleteTodo(index);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 icon: const Icon(Icons.delete, color: Colors.red),
               ),
