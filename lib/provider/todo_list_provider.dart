@@ -5,7 +5,7 @@ import '../models/todo_model.dart';
 class TodoListProvider with ChangeNotifier {
   final box = Boxes.getTodos();
 
-  List<Todo> _todoList = Boxes.getTodos().values.toList();
+  final List<Todo> _todoList = Boxes.getTodos().values.toList();
 
   List<Todo> get todoList => [..._todoList];
 

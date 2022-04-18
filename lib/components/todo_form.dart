@@ -63,11 +63,13 @@ class _TodoFormState extends State<TodoForm> {
             children: [
               TextField(
                 controller: _titleController,
+                textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(labelText: 'Título'),
                 onSubmitted: (_) => _submitForm(),
               ),
               TextField(
                 controller: _descriptionController,
+                textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(labelText: 'Descrição'),
                 onSubmitted: (_) => _submitForm(),
               ),
